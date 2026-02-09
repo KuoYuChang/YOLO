@@ -155,7 +155,7 @@ class TrainSolver(ValidateSolver):
             loss, loss_item = self.loss_fn(aux_predicts, main_predicts, targets)
             loss.backward()
 
-            running_loss +=loss.item()
+            running_loss += loss.item()
             
             # gradient optimize
             self.optimizer.step()
