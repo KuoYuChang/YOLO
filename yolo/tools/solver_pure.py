@@ -107,7 +107,15 @@ class TrainSolver(ValidateSolver):
         self.optimizer = create_optimizer(self.model, self.cfg.task.optimizer)
         self.scheduler = create_scheduler(self.optimizer, self.cfg.task.scheduler)
 
-        self.model_save_path = model_save_fd / cfg.model.name
+        self.model_save_path = model_save_fd / "weights"
+        try:
+            self.model_save_path.mkdir()
+        except FileExistsError:
+            print(f"Directory '{self.model_save_path}' already exists.")
+        except FileNotFoundError:
+            print(f"Parent directory does not exist.")
+        
+        self.model_save_path = self.model_save_path / cfg.model.name
 
     # current float 32, para to half float 16?
     def save_model(self, index):
