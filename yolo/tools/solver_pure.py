@@ -36,6 +36,9 @@ class ValidateSolver(BaseSolver):
         self.metric.warn_on_many_detections = False
         self.val_loader = create_dataloader(self.validation_cfg.data, self.cfg.dataset, self.validation_cfg.task)
 
+        print_num = int(self.print_frac * len(self.val_loader))
+        self.val_print_num = max(print_num, 1)
+
         self.device = cfg.device
 
         self.vec2box = create_converter(
@@ -53,7 +56,6 @@ class ValidateSolver(BaseSolver):
     def val_epoch(self):
         start_t = time.time()
 
-        print_num = int(self.print_frac * len(self.val_loader))
 
         self.model.eval()
 
@@ -72,7 +74,7 @@ class ValidateSolver(BaseSolver):
                 )
     
                 # activate when full test
-                if batch_idx % print_num == 0:
+                if batch_idx % self.val_print_num == 0:
                     current_time = time.time() - start_t
                     print(f'time elapsed: {current_time}, finish {batch_idx/len(self.val_loader)}')
     
@@ -102,6 +104,8 @@ class TrainSolver(ValidateSolver):
         super().__init__(cfg, print_frac)
         self.cfg = cfg
         self.train_loader = create_dataloader(self.cfg.task.data, self.cfg.dataset, self.cfg.task.task)
+        print_num = int(self.print_frac * len(self.train_loader))
+        self.train_print_num = max(print_num, 1)
 
         self.loss_fn = create_loss_function(self.cfg, self.vec2box)
         self.optimizer = create_optimizer(self.model, self.cfg.task.optimizer)
@@ -132,7 +136,6 @@ class TrainSolver(ValidateSolver):
 
         print(f"------------ start epoch {epoch_ith} ------------")
 
-        print_num = int(self.print_frac * len(self.train_loader))
 
         self.model.train()
         
@@ -155,7 +158,7 @@ class TrainSolver(ValidateSolver):
             self.optimizer.step()
             self.optimizer.zero_grad()
             
-            if batch_idx % print_num == 0:
+            if batch_idx % self.train_print_num == 0:
                 current_time = time.time() - start_t
                 print(f'time elapsed: {current_time}, finish {batch_idx/len(self.train_loader)}')
 
