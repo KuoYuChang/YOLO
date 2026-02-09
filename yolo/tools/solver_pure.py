@@ -194,7 +194,6 @@ class InferenceSolver(BaseSolver):
         self.post_process = PostProcess(self.vec2box, self.cfg.task.nms)
 
         self.model = self.model.to(self.device)
-        self.test_model = self.test_model.to(self.device)
 
     def run(self):
         start_t = time.time()
@@ -202,8 +201,6 @@ class InferenceSolver(BaseSolver):
         print_num = int(self.print_frac * len(self.predict_loader))
 
         self.model.eval()
-        # for test re load model
-        self.test_model.eval()
 
         with torch.no_grad():
             for batch_idx, batch in enumerate(self.predict_loader):
@@ -220,22 +217,6 @@ class InferenceSolver(BaseSolver):
                 if getattr(self.cfg.task, "save_predict", None):
                     self._save_image(img, batch_idx)
     
-                # for test re load model
-                predicts = self.post_process(self.test_model(images), rev_tensor=rev_tensor)
-                img = draw_bboxes(origin_frame, predicts, idx2label=self.cfg.dataset.class_list)
-                if getattr(self.predict_loader, "is_stream", None):
-                    fps = self._display_stream(img)
-                else:
-                    fps = None
-                if getattr(self.cfg.task, "save_predict", None):
-                    self._save_image(img, batch_idx+1000000)
-    
-                if print_num >0 and batch_idx % print_num == 0:
-                    current_time = time.time() - start_t
-                    print(f'time elapsed: {current_time}, finish {batch_idx/len(self.predict_loader)}')
-                elif print_num <=0:
-                    current_time = time.time() - start_t
-                    print(f'time elapsed: {current_time}')
 
     def _save_image(self, img, batch_idx):
         save_image_path = Path(self.save_path) / f"frame{batch_idx:03d}.png"
