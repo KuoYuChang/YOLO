@@ -101,7 +101,9 @@ def scale_segmentation(
     h, w = image_dimensions["height"], image_dimensions["width"]
     for anno in annotations:
         category_id = anno["category_id"]
-        if "segmentation" in anno:
+        # check segmentation info length
+        if "segmentation" in anno and len(anno["segmentation"]) > 0:
+            #print(f"get seg first!, seg: {len(anno["segmentation"])}")
             seg_list = [item for sublist in anno["segmentation"] for item in sublist]
         elif "bbox" in anno:
             x, y, width, height = anno["bbox"]
