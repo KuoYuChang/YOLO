@@ -1,4 +1,3 @@
-%%writefile yolo/lazy_pure.py
 import sys
 from pathlib import Path
 
