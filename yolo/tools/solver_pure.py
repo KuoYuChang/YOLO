@@ -168,14 +168,15 @@ class TrainSolver(ValidateSolver):
         # evaluate valid set?
         print("-------------- Evaluating -------------------")
         # model be eval mode when calling self.val_epoch
-        # mAP, mAP50 = self.val_epoch(print_frac=print_frac)
-        # if better, save model
-        print(f"saving better model at epoch: {epoch_ith}")
-        self.save_model(epoch_ith)
+        mAP, mAP50 = self.val_epoch()
 
         print("================ end ====================\n\n")
 
+        return mAP, mAP50
+
     def training(self, num_epoch=10):
+        best_mAP = 0.0
+        best_mAP50 = 0.0
         
         for epoch_ith in range(num_epoch):
             # train epoch start
@@ -185,7 +186,12 @@ class TrainSolver(ValidateSolver):
             self.vec2box.update(self.cfg.image_size)
 
             # run epoch
-            self.train_epoch(epoch_ith)
+            mAP_ith, mAP50_ith = self.train_epoch(epoch_ith)
+
+            # if better, save model
+            if mAP_ith > best_mAP:
+                print(f"saving better model at epoch: {epoch_ith}")
+                self.save_model(epoch_ith)
 
 class InferenceSolver(BaseSolver):
     def __init__(self, cfg: Config, save_path: str, print_frac: float=0.1):
