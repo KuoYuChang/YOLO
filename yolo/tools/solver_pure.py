@@ -136,6 +136,7 @@ class TrainSolver(ValidateSolver):
 
         print(f"------------ start epoch {epoch_ith} ------------")
 
+        running_loss = 0.0
 
         self.model.train()
         
@@ -153,6 +154,8 @@ class TrainSolver(ValidateSolver):
             # loss
             loss, loss_item = self.loss_fn(aux_predicts, main_predicts, targets)
             loss.backward()
+
+            running_loss +=loss.item()
             
             # gradient optimize
             self.optimizer.step()
@@ -160,7 +163,8 @@ class TrainSolver(ValidateSolver):
             
             if batch_idx % self.train_print_num == 0:
                 current_time = time.time() - start_t
-                print(f'time elapsed: {current_time}, finish {batch_idx/len(self.train_loader)}')
+                print(f'time elapsed: {current_time}, loss: {running_loss / print_num:.3f}, finish {batch_idx/len(self.train_loader)}')
+                running_loss = 0.0
 
         # scheduler, current fix as epoch-wise
         self.scheduler.step()
