@@ -195,6 +195,7 @@ class TrainSolver(ValidateSolver):
             # if better, save model
             if mAP_ith > best_mAP:
                 print(f"saving better model at epoch: {epoch_ith}")
+                best_mAP = mAP_ith
                 self.save_model(epoch_ith)
 
 class InferenceSolver(BaseSolver):
