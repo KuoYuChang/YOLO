@@ -69,9 +69,6 @@ class ValidateSolver(BaseSolver):
     
                 raw_out = self.model(images)
                 predicts = self.post_process(raw_out, image_size=[W, H])
-                print("predict: ", predicts)
-                print()
-                print("targets: ", targets)
                 mAP = self.metric.update(
                     [to_metrics_format(predict) for predict in predicts], [to_metrics_format(target) for target in targets]
                 )
@@ -82,8 +79,8 @@ class ValidateSolver(BaseSolver):
                     print(f'time elapsed: {current_time}, finish {batch_idx/len(self.val_loader)}')
     
                 # remove when full test
-                if batch_idx >= 2:
-                    break
+                #if batch_idx >= 2:
+                #    break
 
         print("-------------- Evaluating -------------------")
         epoch_metrics = self.metric.compute()
@@ -179,8 +176,6 @@ class TrainSolver(ValidateSolver):
                 current_time = time.time() - start_t
                 print(f'time elapsed: {current_time}, loss: {running_loss / self.train_print_num:.3f}, finish {batch_idx/len(self.train_loader)}')
                 running_loss = 0.0
-            if batch_idx >= 0:
-                break
 
         # scheduler, current fix as epoch-wise
         self.scheduler.step()
