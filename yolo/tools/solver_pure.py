@@ -114,6 +114,11 @@ class TrainSolver(ValidateSolver):
         self.optimizer = create_optimizer(self.model, self.cfg.task.optimizer)
         self.scheduler = create_scheduler(self.optimizer, self.cfg.task.scheduler)
 
+        use_grad_scalar = False
+        if self.cfg.precision16 == True:
+            use_grad_scalar = True
+        self.scaler = torch.amp.GradScaler(self.device, enabled=use_grad_scalar)
+
         self.model_save_path = model_save_fd / "weights"
         try:
             self.model_save_path.mkdir()
@@ -156,12 +161,18 @@ class TrainSolver(ValidateSolver):
 
             # loss
             loss, loss_item = self.loss_fn(aux_predicts, main_predicts, targets)
-            loss.backward()
+            #loss.backward()
+            self.scaler.scale(loss).backward()
 
             running_loss += loss.item()
             
             # gradient optimize
-            self.optimizer.step()
+            #self.optimizer.step()
+            self.scaler.unscale_(self.optimizer)  # unscale gradients
+            torch.nn.utils.clip_grad_norm_(self.model.parameters(), max_norm=self.cfg.task.optimizer.clip_norm)  # clip gradients
+            self.scaler.step(self.optimizer)  # optimizer.step
+            self.scaler.update()
+            
             self.optimizer.zero_grad()
             
             if batch_idx % self.train_print_num == 0:
