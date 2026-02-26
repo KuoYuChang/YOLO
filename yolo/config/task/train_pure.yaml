@@ -19,6 +19,8 @@ data:
     RandomCrop: 1
     RemoveOutliers: 1e-8
 
+fine_tune_lists: []
+
 optimizer:
   type: SGD
   args:
