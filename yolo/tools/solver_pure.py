@@ -82,7 +82,7 @@ class ValidateSolver(BaseSolver):
                 #if batch_idx >= 2:
                 #    break
 
-        print("-------------- Evaluating -------------------")
+        print("-------------- Evaluating mean AP -------------------")
         epoch_metrics = self.metric.compute()
         del epoch_metrics["classes"]
         #self.log_dict(epoch_metrics, prog_bar=True, sync_dist=True, rank_zero_only=True)
@@ -198,7 +198,7 @@ class TrainSolver(ValidateSolver):
         self.scheduler.step()
         
         # evaluate valid set?
-        print("-------------- Evaluating mean AP-------------------")
+        print("-------------- Evaluating -------------------")
         # model be eval mode when calling self.val_epoch
         mAP, mAP50 = self.val_epoch()
 
