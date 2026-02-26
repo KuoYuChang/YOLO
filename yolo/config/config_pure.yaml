@@ -4,6 +4,8 @@ hydra:
 
 name: v9-dev
 
+precision16: False
+
 defaults:
   - _self_
   - task: inference
