@@ -107,6 +107,8 @@ class TrainSolver(ValidateSolver):
         print_num = int(self.print_frac * len(self.train_loader))
         self.train_print_num = max(print_num, 1)
 
+        self.num_epoch = self.cfg.task.epoch
+
         self.loss_fn = create_loss_function(self.cfg, self.vec2box)
         self.optimizer = create_optimizer(self.model, self.cfg.task.optimizer)
         self.scheduler = create_scheduler(self.optimizer, self.cfg.task.scheduler)
@@ -206,11 +208,11 @@ class TrainSolver(ValidateSolver):
 
         return mAP, mAP50
 
-    def training(self, num_epoch=10):
+    def training(self):
         best_mAP = 0.0
         best_mAP50 = 0.0
         
-        for epoch_ith in range(num_epoch):
+        for epoch_ith in range(self.num_epoch):
             # train epoch start
             #self.optimizer[0].next_epoch(
             #    ceil(len(self.train_loader) / self.trainer.world_size), self.current_epoch
