@@ -116,6 +116,23 @@ class TrainSolver(ValidateSolver):
             use_grad_scalar = True
         self.scaler = torch.amp.GradScaler(self.device, enabled=use_grad_scalar)
 
+        # freeze layers, for transfer learning
+        freeze_list = self.cfg.task.fine_tune.lists
+        for i in freeze_list:
+            layer = self.model.model[i]
+
+            for param in layer.parameters():
+                param.requires_grad = False
+
+        #layer_num = len(self.model.model)
+        #for i in range(layer_num):
+        #    layer = self.model.model[i]
+        #    print(f"{i}th layers: {layer.layer_type} {layer.tags}", end=": ")
+        #    for param in layer.parameters():
+        #        print(f"{param.shape} {param.requires_grad}", end=", ")
+        #    print("\n")
+        #print("------------------------------")
+
         self.model_save_path = model_save_fd / "weights"
         try:
             self.model_save_path.mkdir()
