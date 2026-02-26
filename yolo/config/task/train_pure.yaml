@@ -26,6 +26,7 @@ optimizer:
     weight_decay: 0.0005
     momentum: 0.937
     nesterov: true
+  clip_norm: 10
 
 loss:
   objective:
