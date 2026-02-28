@@ -10,8 +10,7 @@
 ## Run on colab
 We provide colab friendly branch `CloudNB`, see our demo
 
-[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/KuoYuChang/Colab_MIT/blob/main/object_detection/yolov9_colab_demo.ipynb
-)
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/KuoYuChang/Colab_MIT/blob/main/object_detection/yolov9_colab_demo.ipynb)
 
 Or see our [ipynb file](https://github.com/KuoYuChang/Colab_MIT/blob/main/object_detection/yolov9_colab_demo.ipynb) on github
 \
